@@ -9,27 +9,58 @@
 ## Division of Labor
 
 ### Part 1: Mounting the Image
-- **Responsibilities**: [Description]
+
+- Open the FAT32 image from the first command-line argument. If it cannot be opened, report the
+  error and exit. Show the image name and current directory in the shell prompt.
+- `info` reads the boot sector and reports the root cluster number, bytes per sector,
+  sectors per cluster, data-region cluster count, entries in one FAT, and image size in bytes.
+  Label each value and print it on its own line.
+- `exit` closes the image and frees the shell's resources.
 - **Assigned to**: John Doe
 
 ### Part 2: Navigation
-- **Responsibilities**: [Description]
+
+- `cd DIRNAME` changes the current directory and updates the prompt. A missing name or a name
+  that refers to a file produces an error and leaves the shell in the current directory.
+- `ls` lists file and directory names in the current directory, including `.` and `..`.
 - **Assigned to**: Jane Smith
 
 ### Part 3: Create
-- **Responsibilities**: [Description]
+
+- `mkdir DIRNAME` creates a directory in the current directory.
+- `creat FILENAME` creates a zero-byte file in the current directory.
+- Both commands reject a name already used by either a file or a directory.
 - **Assigned to**: Alex Brown
 
 ### Part 4: Read
-- **Responsibilities**: [Description]
+
+- `open FILENAME FLAGS` adds an existing file to the open-file table with offset zero. Accept
+  `-r`, `-w`, `-rw`, or `-wr`. Report a missing file, a duplicate open, or an invalid mode.
+- `close FILENAME` removes the file from the table. Report an error if it is missing or closed.
+- `lsof` lists the index, name, mode, byte offset, and path of each open file. Report when the
+  table is empty. The assignment assumes at most ten files are open at once.
+- `lseek FILENAME OFFSET` sets an open file's byte offset. Reject a missing or closed file and
+  any offset beyond the end of the file.
+- `read FILENAME SIZE` reads up to `SIZE` bytes from the current offset, stops at end of file,
+  and advances the offset by the number of bytes read. Require a file opened for reading.
 - **Assigned to**: Alex Brown, Jane Smith
 
 ### Part 5: Update
-- **Responsibilities**: [Description]
+
+- `write FILENAME "STRING"` writes the quoted text at the current offset of a file opened for
+  writing. Extend the file as needed and advance the offset by the number of bytes written.
+- `mv SOURCE DESTINATION` renames a file or directory, or moves it into an existing destination
+  directory. Report an error if the source is missing, the source file is open, or the
+  destination is an existing file.
 - **Assigned to**: Alex Brown, Jane Smith
 
 ### Part 6: Delete
-- **Responsibilities**: [Description]
+
+- `rm FILENAME` removes a closed file's directory entry and frees its data clusters. Reject a
+  missing name, a directory, or an open file.
+- `rmdir DIRNAME` removes an empty directory's entry from its parent and frees its clusters.
+  Exclude `.` and `..` from the emptiness check and protect both from removal. Reject a missing
+  directory, a file, a nonempty directory, or a directory containing an open file.
 - **Assigned to**: Jane Smith
 
 ### Extra Credit
