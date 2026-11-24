@@ -3,6 +3,7 @@
 #include <string.h>
 #include "lexer.h"
 #include "part1.h"
+#include "part2.h"
 
 int main(int argc, char *argv[]) {
     // Require exactly one FAT32 image argument
@@ -20,10 +21,11 @@ int main(int argc, char *argv[]) {
     // Extract only the image filename for the prompt
     const char *image_name = strrchr(argv[1], '/');
     image_name = image_name ? image_name + 1 : argv[1];
+    EntryList path = {0};
 
     // Continue accepting commands until exit or EOF
     while (1) {
-        printf("%s/>", image_name);
+        print_prompt(image_name, &path);
         fflush(stdout);
 
         // Read input using the provided lexer function
@@ -53,6 +55,20 @@ int main(int argc, char *argv[]) {
                 command_info(&fat32);
             }
         }
+        else if (strcmp(tokens->items[0], "ls") == 0) {
+            if (tokens->size != 1) {
+                printf("Error: ls takes no arguments\n");
+            } else {
+                command_ls(&fat32);
+            }
+        }
+        else if (strcmp(tokens->items[0], "cd") == 0) {
+            if (tokens->size != 2) {
+                printf("Usage: cd DIRNAME\n");
+            } else {
+                command_cd(&fat32, &path, tokens->items[1]);
+            }
+        }
         else if (strcmp(tokens->items[0], "exit") == 0) {
             if (tokens->size != 1) {
                 printf("Error: exit takes no arguments\n");
@@ -70,6 +86,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Close the image before terminating
+    free(path.items);
     close_image(&fat32);
 
     return 0;
